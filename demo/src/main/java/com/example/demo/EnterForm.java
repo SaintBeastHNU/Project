@@ -2,34 +2,34 @@ package com.example.demo;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 public class EnterForm {
-
+    public static TextField[][] allFields;
     public static GridPane enterFrom() {
         GridPane form = new GridPane();
         form.setAlignment(Pos.CENTER);
+        form.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(10), Insets.EMPTY)));
+        form.setBorder(new Border(new BorderStroke(Color.GREY, BorderStrokeStyle.SOLID, new CornerRadii(7), new BorderWidths(2))));
+        form.setPrefSize(300, 150);
+        form.setMaxSize(300,300);
         form.setPadding(new Insets(20));
         form.setVgap(10);
         form.setHgap(10);
-        form.add(MyTextField.textField(),0,0);
-        form.add(MyTextField.textField(),1,0);
-        form.add(MyTextField.textField(),2,0);
-        form.add(MyTextField.textField(),3,0);
-
-        form.add(MyTextField.textField(),0,1);
-        form.add(MyTextField.textField(),1,1);
-        form.add(MyTextField.textField(),2,1);
-        form.add(MyTextField.textField(),3,1);
-
-        form.add(MyTextField.textField(),0,2);
-        form.add(MyTextField.textField(),1,2);
-        form.add(MyTextField.textField(),2,2);
-        form.add(MyTextField.textField(),3,2);
-
+        allFields = new TextField[3][4];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                allFields[i][j] = MyTextField.textField();
+                form.add(allFields[i][j],j,i);
+            }
+        }
 
         return form;
+    }
+
+    public static TextField[][] getAllFields() {
+        return allFields;
     }
 }
