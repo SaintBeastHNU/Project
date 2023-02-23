@@ -13,12 +13,10 @@ public class MyEquation implements Gauss<Float, MyEquation> {
         return equation;
     }
 
-    public void addDataToMyEquation(int size, TextField[][] af) {
+    public void addDataToMyEquation(int size, TextField[][] af, int i) {
         this.equation.clear();
-        for (int i = 0; i < size-1; i++) {
-            for (int j = 0; j < size; j++) {
-                this.equation.add(Float.parseFloat(af[i][j].getText()));
-            }
+        for (int j = 0; j < size; j++) {
+            this.equation.add(Float.parseFloat(af[i][j].getText()));
         }
     }
 

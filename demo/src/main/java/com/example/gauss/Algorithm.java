@@ -24,7 +24,7 @@ public class Algorithm<N extends Number, T extends Gauss<N, T>> {
     }
 
     private boolean checkSystem(LinearSystem<N, T> system){
-        if (system.size() < 2) return false;
+        if (system.size() < 3) return false;
         for(int i = 0; i < system.size(); i++){
             if (system.get(i).size() != (system.size() + 1)){
                 return false;

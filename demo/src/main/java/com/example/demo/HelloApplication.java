@@ -79,11 +79,11 @@ public class HelloApplication extends Application {
 
     public static LinearSystem<Float, MyEquation> addSystem() {
         LinearSystem<Float, MyEquation> list = new LinearSystem<>();
+        TextField[][] af = EnterForm.getAllFields();
 
         for (int i = 0; i < DEFAULT_EQUATIONS_NUMBER; i++) {
             MyEquation myEq = new MyEquation();
-            TextField[][] af = EnterForm.getAllFields();
-            myEq.addDataToMyEquation(DEFAULT_VARIABLES_NUMBER + 1, af);
+            myEq.addDataToMyEquation(DEFAULT_VARIABLES_NUMBER+1, af, i);
             list.push(myEq);
         }
         return list;
