@@ -1,14 +1,12 @@
 package com.example.demo;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -21,15 +19,15 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
         GridPane form = EnterForm.enterFrom();
 
-        Button solve = new Button("Расчитать");
+        Button solveButton = new Button("Расчитать");
         //solve.setPadding(new Insets(0,0,10,0));
-        solve.setMaxSize(100,30);
-        solve.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
-        solve.setOnAction(event -> solveEquation());
+        solveButton.setMaxSize(100,30);
+        solveButton.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
+        solveButton.setOnAction(event -> solveEquation());
 
         result = BottomPanel.createBottomPanel();
 
-        VBox box = new VBox(form, solve, result);
+        VBox box = new VBox(form, solveButton, result);
         box.setSpacing(20);
         box.setAlignment(Pos.CENTER);
         //box.setBackground(new Background(new BackgroundFill(Color.CHOCOLATE, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -43,9 +41,11 @@ public class HelloApplication extends Application {
 
     public void solveEquation() {
         double matrix[][] = new double[3][4];
+        //Запись во временный массив все элементы TextField
         TextField[][] af = EnterForm.getAllFields();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
+                //Получить текст из TextField[i][j]
                 matrix[i][j] = Double.parseDouble(af[i][j].getText());
             }
         }
