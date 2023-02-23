@@ -11,26 +11,39 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import com.example.gauss.*;
 
 public class HelloApplication extends Application {
     Label result;
+
+    private static final int DEFAULT_EQUATIONS_NUMBER = 3;
+    private static final int DEFAULT_VARIABLES_NUMBER = 3;
+
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         GridPane form = EnterForm.enterFrom();
 
         Button solveButton = new Button("Расчитать");
-        //solve.setPadding(new Insets(0,0,10,0));
-        solveButton.setMaxSize(100,30);
+        Button resetButton = new Button("Очистить поля");
+        Button exitButton = new Button("Завершение программы");
+
+        solveButton.setMaxSize(100, 30);
         solveButton.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
         solveButton.setOnAction(event -> solveEquation());
+
+//        resetButton.setMaxSize(100, 30);
+//        resetButton.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
+////        resetButton.setOnAction(event ->); тут реализовать функцию очистки полей
+//
+//        exitButton.setMaxSize(100, 30);
+//        exitButton.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
+//        exitButton.setOnAction(event -> System.exit(0));
 
         result = BottomPanel.createBottomPanel();
 
         VBox box = new VBox(form, solveButton, result);
         box.setSpacing(20);
         box.setAlignment(Pos.CENTER);
-        //box.setBackground(new Background(new BackgroundFill(Color.CHOCOLATE, CornerRadii.EMPTY, Insets.EMPTY)));
 
         Scene scene = new Scene(box, 550, 400);
 
@@ -40,50 +53,42 @@ public class HelloApplication extends Application {
     }
 
     public void solveEquation() {
-        double matrix[][] = new double[3][4];
-        //Запись во временный массив все элементы TextField
-        TextField[][] af = EnterForm.getAllFields();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 4; j++) {
-                //Получить текст из TextField[i][j]
-                matrix[i][j] = Double.parseDouble(af[i][j].getText());
-            }
+        LinearSystem<Float, MyEquation> list = addSystem();
+        Algorithm<Float, MyEquation> alg = new Algorithm<>(list);
+        int i, j;
+
+        try {
+            alg.calculate();
+        } catch (NullPointerException | ArithmeticException e) {
+            result.setText(e.getMessage());
         }
 
-        int n = matrix.length;
-        for (int k = 0; k < n; k++) {
-            int max = k;
-            for (int i = k + 1; i < n; i++) {
-                if (Math.abs(matrix[i][k]) > Math.abs(matrix[max][k])) {
-                    max = i;
-                }
-            }
-            double[] temp = matrix[k];
-            matrix[k] = matrix[max];
-            matrix[max] = temp;
+        Float[] x = new Float[DEFAULT_EQUATIONS_NUMBER];
 
-            for (int i = k + 1; i < n; i++) {
-                double factor = matrix[i][k] / matrix[k][k];
-                for (int j = k + 1; j < n + 1; j++) {
-                    matrix[i][j] -= factor * matrix[k][j];
-                }
-            }
+        for (i = list.size() - 1; i >= 0; i--) {
+            Float sum = 0.0f;
+            for (j = list.size() - 1; j > i; j--)
+                sum += list.itemAt(i, j) * x[j];
+            x[i] = (list.itemAt(i, list.size()) - sum) / list.itemAt(i, j);
         }
 
-        // Обратный ход метода Гаусса
-        double[] solution = new double[n];
-        for (int i = n - 1; i >= 0; i--) {
-            double sum = 0.0;
-            for (int j = i + 1; j < n; j++) {
-                sum += matrix[i][j] * solution[j];
-            }
-            solution[i] = (matrix[i][n] - sum) / matrix[i][i];
-        }
-
-        String str = String.format("x1: %.3f; x2: %.3f; x3: %.3f;", solution[0], solution[1], solution[2]);
+        String str = String.format("x1: %.3f; x2: %.3f; x3: %.3f;", x[0], x[1], x[2]);
         result.setText(str);
         result.setVisible(true);
     }
+
+    public static LinearSystem<Float, MyEquation> addSystem() {
+        LinearSystem<Float, MyEquation> list = new LinearSystem<>();
+
+        for (int i = 0; i < DEFAULT_EQUATIONS_NUMBER; i++) {
+            MyEquation myEq = new MyEquation();
+            TextField[][] af = EnterForm.getAllFields();
+            myEq.addDataToMyEquation(DEFAULT_VARIABLES_NUMBER + 1, af);
+            list.push(myEq);
+        }
+        return list;
+    }
+
 
     public static void main(String[] args) {
         launch();
